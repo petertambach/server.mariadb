@@ -1,0 +1,29 @@
+---
+
+- name: Add MariaDB GPG key (Debian <= 8)
+  apt_key:
+    keyserver: keys.gnupg.net
+    id: cbcb082a1bb943db
+  when: ansible_distribution_major_version is version_compare('8', 'le')
+
+- name: Add MariaDB GPG key (Debian > 8)
+  apt_key:
+    keyserver: keys.gnupg.net
+    id: F1656F24C74CD1D8
+  when: ansible_distribution_major_version is version_compare('8', 'gt')
+
+- name: Add MariaDB {{ mariadb_version }} repository
+  apt_repository:
+    repo: 'deb http://ftp.nluug.nl/db/mariadb/repo/{{ mariadb_version }}/debian {{ ansible_distribution_release | lower }}  main'
+    state: present
+    update_cache: yes
+
+- name: Install MariaDB {{ mariadb_version }}
+  apt: pkg={{ item }} state=present
+  vars:
+    item:
+    - mariadb-server
+    - mariadb-client
+    - python-mysqldb
+    - mariadb-backup
+

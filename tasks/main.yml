@@ -1,0 +1,45 @@
+---
+# main tasks file for MariaDB
+
+- name: Add MariaDB repo and install packages (Centos)
+  include_tasks: "centos.yml"
+  when: ansible_os_family == "RedHat"
+
+- name: Add MariaDB repo and install packages (Debian)
+  include_tasks: "debian.yml"
+  when: ansible_os_family == "Debian"
+
+- name: Copy config file
+  template: src=files/mariadb_config.cnf dest={{ mariadb_conf_dir[ansible_distribution] }}/{{ mariadb_conf_file }} owner=root group=root mode=0644
+  notify: restart mysql
+
+- name: Start and enable service
+  service: name=mariadb state=started enabled=yes
+
+- name: Secure MariaDB installation
+  include_tasks: "mariadb_secure_installation.yml"
+  when: mariadb_secure_installation is defined and mariadb_secure_installation == True
+
+#- name: Add additional conf for MariaDB 10.2 in mariadb.conf.d
+#  blockinfile:
+#    path: /etc/mysql/conf.d/settings.cnf
+#    block: |
+#      # Import all .cnf files from configuration directory
+#      !includedir /etc/mysql/mariadb.conf.d/
+#  become: yes
+#  become_user: root
+#  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+#
+#- name: Add additional conf for MariaDB 10.2 in mariadb.conf.d
+#  blockinfile:
+#    path: /etc/mysql/mariadb.conf.d/erpnext.cnf
+#    block: |
+#      [mysqld]
+#      pid-file        = /var/run/mysqld/mysqld.pid
+#      socket          = /var/run/mysqld/mysqld.sock
+#    create: yes
+#  become: yes
+#  become_user: root
+#  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+#  notify: restart mysql
+#

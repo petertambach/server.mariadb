@@ -1,0 +1,11 @@
+---
+
+mariadb_version: 10.4
+mariadb_secure_installation: False
+mariadb_conf_dir:
+  "CentOS": /etc/my.cnf.d
+  "Debian": /etc/mysql/conf.d
+mariadb_runfile:
+  "CentOS": /var/lib/mysql/mysql
+  "Debian": /var/run/mysqld/mysqld
+mariadb_conf_file: settings.cnf

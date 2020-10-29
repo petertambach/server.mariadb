@@ -1,0 +1,22 @@
+---
+
+- name: Enable MariaDB {{ mariadb_version }} repo
+  yum_repository:
+    name: MariaDB
+    description: MariaDB {{ mariadb_version }} repository from mariadb.org
+    baseurl: http://yum.mariadb.org/{{ mariadb_version }}/centos7-amd64
+    enabled: yes
+    gpgcheck: 1
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+
+- name: Install MariaDB
+  yum: name={{ item }} state=present
+  vars:
+    item:
+    - MariaDB-server
+    - MariaDB-client
+    - MySQL-python
+    - MariaDB-backup
+    - MariaDB-shared
+    - MariaDB-devel
+
